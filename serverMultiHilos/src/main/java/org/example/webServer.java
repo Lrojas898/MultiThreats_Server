@@ -2,6 +2,8 @@ package org.example;
 import java.io.* ;
 import java.net.* ;
 import java.util.* ;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public final class webServer {
 
@@ -13,12 +15,18 @@ public final class webServer {
 
         System.out.println("Server Web has started in port: "+port);
 
+        //tengo 4 trabajadores disponibles -hilos- funcionales que se encargarán de todas las peticiones
+
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
+
+
+
         while(true){
             Socket connection = listener.accept();
-            System.out.println("New connection accepted");
-            httpRequest request= new httpRequest(connection);
-            Thread thread = new Thread(request);
-            thread.start();
+            System.out.println("New connection accepted...");
+
+
+            executor.execute(new httpRequest(connection));
 
 
 
@@ -29,6 +37,7 @@ public final class webServer {
 
 
     }
+
 
 
 }
